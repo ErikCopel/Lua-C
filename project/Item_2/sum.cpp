@@ -1,6 +1,7 @@
 #include "lua.hpp"
 #include <iostream>
 
+
 int sum (lua_State *L) {
     //check and fetch the arguments
     double arg1 = luaL_checknumber (L, 1);
@@ -24,13 +25,22 @@ int luaopen_sum(lua_State *L) {
 int main(int argc, char const *argv[])
 {
   printf("Begin...");
-  lua_State *L = lua_open();
-  int r = luaL_dofile(L, "main.lua");  
-  
-  lua_call(L, 0, 1);
+  lua_State* L = luaL_newstate();
 
+  // load Lua libraries
+  luaL_openlibs(L);
 
-  system("pause");
+  // load Lua script
+  if (luaL_loadfile(L, "main.lua")) 
+  {
+    std::cerr << "Falha ao carregar o script!";
+  }
+  // Open c functions to Lua
+  luaopen_sum(L);
+
+  lua_pcall(L, 0, 0, 0);
+ 
+
   lua_close(L);
   return 0;
 }
